@@ -26,15 +26,11 @@
   <body>
     <textarea id="event-log" readonly></textarea>
     <div id="play-button">Play</div>
+    <form id="panel"></form>
     <video id="vdo-1" playsinline>
       <source src="http://rmcdn.2mdn.net/Demo/vast_inspector/android.mp4" type="video/mp4">
     </video>
     <script>
-      var textarea = document.getElementById('event-log');
-      function log(text) {
-        textarea.value = text + ' ' + enabledEvents[event] + ' ' + (new Date()).getTime() + '\n' + textarea.value;
-      }
-      var videoContent = document.getElementById('vdo-1');
       var avaliableEvents = [
         'click', 'touch', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseout', 'mouseover', 'mouseup',
         'touchstart', 'touchmove', 'touchend', 'touchcancel',
@@ -43,13 +39,33 @@
       for (var i = avaliableEvents.length - 1; i >= 0; i--) {
         enabledEvents[avaliableEvents[i]] = false;
       }
+
       document.addEventListener("DOMContentLoaded", function(event) {
+
+        var panel = document.getElementById('panel');
+        for (var i = avaliableEvents.length - 1; i >= 0; i--) {
+          var event = avaliableEvents[i];
+          panel.innerHTML += "<input type='checkbox' id='" + event + "'>" + event + "</label>";
+        };
+        var checkboxes = document.querySelectorAll("form input");
+        checkboxes.forEach(function(box){
+          box.addEventListener('click', function(e) {
+            enabledEvents[this.id] = this.checked;
+            console.log(this.id, this.checked);
+          });
+        });
+        var textarea = document.getElementById('event-log');
+        function log(text) {
+          textarea.value = text + '\n' + textarea.value;
+        }
+        var videoContent = document.getElementById('vdo-1');
+
         var playButton = document.getElementById('play-button');
         for (var i = avaliableEvents.length - 1; i >= 0; i--) {
           var event = avaliableEvents[i];
           var handlerFactory = function(event) {
             return function() {
-              log(event);
+              log(event + ' ' + enabledEvents[event] + ' ' + (new Date()).getTime());
               if (enabledEvents[event]) {
                 videoContent.play();
               }
