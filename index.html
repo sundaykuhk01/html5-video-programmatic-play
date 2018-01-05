@@ -45,7 +45,7 @@
         var panel = document.getElementById('panel');
         for (var i = avaliableEvents.length - 1; i >= 0; i--) {
           var event = avaliableEvents[i];
-          panel.innerHTML += "<input type='checkbox' id='" + event + "'>" + event + "</label>";
+          panel.innerHTML += "<input type='checkbox' id='" + event + "'>" + event + "</label><br>";
         };
         var checkboxes = document.querySelectorAll("form input");
         checkboxes.forEach(function(box){
