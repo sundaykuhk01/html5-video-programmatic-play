@@ -22,28 +22,34 @@
   </head>
   <body>
     <textarea id="event-log" readonly></textarea>
+    <div id="play-button">Play</div>
     <video id="vdo-1" playsinline>
       <source src="http://rmcdn.2mdn.net/Demo/vast_inspector/android.mp4" type="video/mp4">
     </video>
-    <div id="play-button">Play</div>
     <script>
       var textarea = document.getElementById('event-log');
       function log(text) {
-        textarea.value = text + ' ' + (new Date()).getTime() + '\n' + textarea.value;
+        textarea.value = text + ' ' + enabledEvents[event] + ' ' + (new Date()).getTime() + '\n' + textarea.value;
       }
       var videoContent = document.getElementById('vdo-1');
       var avaliableEvents = [
         'click', 'touch', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseout', 'mouseover', 'mouseup',
         'touchstart', 'touchmove', 'touchend', 'touchcancel',
       ]
+      var enabledEvents = {}
+      for (var i = avaliableEvents.length - 1; i >= 0; i--) {
+        enabledEvents[avaliableEvents[i]] = false;
+      }
       document.addEventListener("DOMContentLoaded", function(event) {
         var playButton = document.getElementById('play-button');
         for (var i = avaliableEvents.length - 1; i >= 0; i--) {
           var event = avaliableEvents[i];
           var handlerFactory = function(event) {
             return function() {
-              videoContent.play();
               log(event);
+              if (enabledEvents[event]) {
+                videoContent.play();
+              }
             };
           };
           playButton.addEventListener(
